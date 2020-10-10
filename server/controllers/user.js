@@ -2,8 +2,6 @@
 var bcrypt = require('bcrypt-nodejs');
 var User = require('../models/user');
 var jwt = require('jsonwebtoken');
-var bodyparser = require('body-parser');
-//var jwt = require('../services/jwt');
 
 // Métodos de prueba
 function pruebas(req, res) {
@@ -63,43 +61,6 @@ function saveUser(req, res) {
 }
 
 // Login
-// function loginUser(req, res){
-// 	var params = req.body;
-
-// 	var email = params.email;
-// 	var password = params.password;
-
-// 	User.findOne({email: email}, (err, user) => {
-// 		if(err) return res.status(500).send({message: 'Error en la petición'});
-
-// 		if(user){
-// 			bcrypt.compare(password, user.password, (err, check) => {
-// 				if(check){
-
-// 					/*if(params.gettoken){
-// 						//generar y devolver token
-// 						return res.status(200).send({
-// 							token: jwt.createToken(user)
-// 						});
-// 					}else{*/
-// 						//devolver datos de usuario
-// 						user.password = undefined;
-// 						token = jwt.sign(user._id, 'secret');
-// 						return res.status(200).send({
-// 							user,
-// 							token
-// 						});
-// 					//}
-
-// 				}else{
-// 					return res.status(404).send({message: 'El usuario no se ha podido identificar'});
-// 				}
-// 			});
-// 		}else{
-// 			return res.status(404).send({message: 'El usuario no se ha podido identificar!!'});
-// 		}
-// 	});
-// }
 async function login(req, res) {
 	var {email, password} = req.body;
 
@@ -115,6 +76,7 @@ async function login(req, res) {
 					const token = jwt.sign({ user }, 'clave_super_secreta');
 					res.status(200).send({
 						msg: 'success',
+						id: user._id,
 						name: user.name,
 						surname: user.surname,
 						token
@@ -129,7 +91,6 @@ async function login(req, res) {
 		}
 	});
 }
-
 
 // Edición de datos de usuario
 async function updateUser(req, res) {
@@ -166,56 +127,12 @@ async function updateUser(req, res) {
 		});
 
 	});
-	// TODO: Validar token y comprobar si es el usuario correcto
-	/*const uid = req.params.id;
-	
-	try {
-	
-		const usuarioDB = await User.findById( uid );
-	
-		if ( !usuarioDB ) {
-			return res.status(404).json({
-				ok: false,
-				msg: 'No existe un usuario por ese id'
-			});
-		}
-	
-		// Actualizaciones
-		const { password, email, nick,  ...campos } = req.body; //Extraer ciertos campos
-	
-		if ( usuarioDB.email !== email || usuarioDB.nick !== nick) {
-	
-			const existeEmail = await User.findOne({ email });
-			if ( existeEmail ) {
-				return res.status(400).json({
-					ok: false,
-					msg: 'Ya existe un usuario con ese email'
-				});
-			}
-		}else{
-			campos.email = email;
-			const usuarioActualizado = await User.findByIdAndUpdate( uid, campos, { new: true } );
-	
-			res.json({
-				ok: true,
-				User: usuarioActualizado
-			});
-		} 
-	    
-	} catch (error) {
-		console.log(error);
-		res.status(500).json({
-			ok: false,
-			msg: 'Error inesperado'
-		})
-	}*/
 
 }
 
 module.exports = {
 	pruebas,
 	saveUser,
-	//loginUser,
 	login,
 	updateUser,
 }
